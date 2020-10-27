@@ -1,0 +1,7 @@
+main: dev.perryplaysmc.betterguis.PluginMain
+version: 1.0
+name: 'BetterGUIs'
+api-version: 1.13
+
+commands:
+  test:
