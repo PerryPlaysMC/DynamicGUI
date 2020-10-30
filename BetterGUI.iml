@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/exampleplugin" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/code" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/assets" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -1,11 +1,12 @@
 package example.plugin;
 
-import betterguis.guis.BetterGUI;
-import betterguis.guis.BetterGUIManager;
-import betterguis.guis.item.ItemBuilder;
-import betterguis.guis.item.XMaterial;
-import betterguis.guis.utils.filler.FillerType;
-import betterguis.guis.utils.guitypes.BetterListGUI;
+import dev.perryplaysmc.mines.utils.guis.BetterGUI;
+import dev.perryplaysmc.mines.utils.guis.BetterGUIManager;
+import dev.perryplaysmc.mines.utils.guis.item.ItemBuilder;
+import dev.perryplaysmc.mines.utils.guis.item.XMaterial;
+import dev.perryplaysmc.mines.utils.guis.item.utils.ItemUtility;
+import dev.perryplaysmc.mines.utils.guis.utils.filler.FillerType;
+import dev.perryplaysmc.mines.utils.guis.utils.guitypes.BetterListGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -29,6 +30,7 @@ public class PluginMain extends JavaPlugin {
     @Override
     public void onEnable() {
         PluginManager manager = Bukkit.getPluginManager();
+        new ItemUtility();
         manager.registerEvents(new BetterGUIManager(), this);
     }
     @Override
