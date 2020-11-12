@@ -1,12 +1,12 @@
 package example.plugin;
 
-import dev.perryplaysmc.mines.utils.guis.BetterGUI;
-import dev.perryplaysmc.mines.utils.guis.BetterGUIManager;
-import dev.perryplaysmc.mines.utils.guis.item.ItemBuilder;
-import dev.perryplaysmc.mines.utils.guis.item.XMaterial;
-import dev.perryplaysmc.mines.utils.guis.item.utils.ItemUtility;
-import dev.perryplaysmc.mines.utils.guis.utils.filler.FillerType;
-import dev.perryplaysmc.mines.utils.guis.utils.guitypes.BetterListGUI;
+import bettergui.BetterGUI;
+import bettergui.BetterGUIManager;
+import bettergui.item.ItemBuilder;
+import bettergui.item.XMaterial;
+import bettergui.item.utils.ItemUtility;
+import bettergui.utils.filler.FillerType;
+import bettergui.utils.guitypes.BetterListGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
