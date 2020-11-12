@@ -31,6 +31,7 @@ public class BetterListGUI extends BetterGUI {
     private HashMap<Integer, Set<Integer>> wasAdded = new HashMap<>();
     private JavaPlugin main = JavaPlugin.getPlugin(PluginMain.class);
     private TurnPage previous, next;
+    private ClickEvent onClick;
     private int currentPage = 1;
     private int removeDelay = 0;
     private HashMap<Integer, HashMap<Integer, ItemStack>> pages = new HashMap<>();
@@ -502,109 +503,7 @@ public class BetterListGUI extends BetterGUI {
 
     @Override
     public BetterListGUI onClick(ClickEvent click) {
-        super.onClick((event) -> {
-            if(event.getSlot() == previous.slot && (event.getCurrentItem()!=null&&event.getCurrentItem().isSimilar(previous.item.getItem()))) {
-                if(currentPage == 1) {
-                    if(mainPage!=null)
-                        mainPage.show((Player) event.getWhoClicked());
-                    if(mainListPage!=null)
-                        mainListPage.show((Player) event.getWhoClicked());
-                    return;
-                }
-                if((currentPage-1) > 0) currentPage--;
-                if(currentPage == 1) pane.setItem(next.slot, getPreviousPageItem().getItem());
-                if(getName().contains("{page}")||getName().contains("{pages}")) {
-                    String old = getName();
-                    setName(getName().replace("{page}", currentPage + "").replace("{pages}", getPages() + ""));
-                    this.name = old;
-                }
-                fillers.forEach((slot, item)->{
-                    pane.setItem(slot, item.getItem());
-                });
-                final int[] delay = {0};
-                for(Integer slot : pages.get(currentPage+1).keySet()) {
-                    if(this.removeDelay == 0)
-                        pane.setItem(slot, null);
-                    else
-                        (new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                pane.setItem(slot, null);
-                            }
-                        }).runTaskLaterAsynchronously(main, delay[0]+=this.removeDelay);
-                }
-                delay[0] = this.removeDelay;
-                pages.get(currentPage).forEach((slot, item) -> {
-                    if(this.removeDelay == 0)
-                        pane.setItem(slot, item);
-                    else
-                        (new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                pane.setItem(slot, item);
-                            }
-                        }).runTaskLaterAsynchronously(main, delay[0]+=this.removeDelay);
-
-                });
-                if(currentPage <= 1 && (mainPage == null && mainListPage == null))
-                    if(fillers.containsKey(previous.slot)) pane.setItem(previous.slot, fillers.get(previous.slot).getItem());
-                if(currentPage > 1 || (mainPage != null || mainListPage != null))
-                    pane.setItem(previous.slot, getPreviousPageItem().getItem());
-                pane.setItem(next.slot, getNextPageItem().getItem());
-                event.setCancelled(true);
-                return;
-            }
-            if(event.getSlot() == next.slot && (event.getCurrentItem()!=null&&event.getCurrentItem().isSimilar(next.item.getItem()))) {
-                if((currentPage+1) <= getPages()) currentPage++;
-                if(currentPage > 1) pane.setItem(previous.slot, getPreviousPageItem().getItem());
-                if(getName().contains("{page}")||getName().contains("{pages}")) {
-                    String old = getName();
-                    setName(getName().replace("{page}", currentPage + "").replace("{pages}", getPages() + ""));
-                    this.name = old;
-                }
-                fillers.forEach((slot, item)->{
-                    pane.setItem(slot, item.getItem());
-                });
-                final int[] delay = {0};
-                for(Integer slot : pages.get(currentPage-1).keySet()) {
-                    if(this.removeDelay == 0)
-                        pane.setItem(slot, null);
-                    else
-                        (new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                pane.setItem(slot, null);
-                            }
-                        }).runTaskLaterAsynchronously(main, delay[0]+=this.removeDelay);
-                }
-                delay[0] = this.removeDelay;
-                pages.get(currentPage).forEach((slot, item) -> {
-                    if(this.removeDelay == 0)
-                        pane.setItem(slot, item);
-                    else
-                        (new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                pane.setItem(slot, item);
-                            }
-                        }).runTaskLaterAsynchronously(main, delay[0]+=this.removeDelay);
-
-                });
-                if(currentPage>=getPages())
-                    if(fillers.containsKey(next.slot)) pane.setItem(next.slot, fillers.get(next.slot).getItem());
-                if(currentPage < getPages())
-                    pane.setItem(next.slot, getNextPageItem().getItem());
-                pane.setItem(previous.slot, getPreviousPageItem().getItem());
-                event.setCancelled(true);
-                return;
-            }
-            if(pages.get(currentPage).containsKey(event.getSlot()) || !isFiller(event.getSlot())) {
-                if(click!=null)
-                    click.onEvent(event);
-                return;
-            }
-
-        });
+        this.onClick = click;
         return this;
     }
 
@@ -626,6 +525,109 @@ public class BetterListGUI extends BetterGUI {
             getInventory().setItem(next.slot, getNextPageItem().getItem());
         if(mainPage!=null || currentPage > 1)
             getInventory().setItem(previous.slot, getPreviousPageItem().getItem());
+        if(super.getClick() ==null) {
+            super.onClick((event)-> {
+                if(event.getSlot() == previous.slot && (event.getCurrentItem()!=null&&event.getCurrentItem().isSimilar(previous.item.getItem()))) {
+                    if(currentPage == 1) {
+                        if(mainPage!=null)
+                            mainPage.show((Player) event.getWhoClicked());
+                        if(mainListPage!=null)
+                            mainListPage.show((Player) event.getWhoClicked());
+                        return;
+                    }
+                    if((currentPage-1) > 0) currentPage--;
+                    if(currentPage == 1) pane.setItem(next.slot, getPreviousPageItem().getItem());
+                    if(getName().contains("{page}")||getName().contains("{pages}")) {
+                        String old = getName();
+                        setName(getName().replace("{page}", currentPage + "").replace("{pages}", getPages() + ""));
+                        this.name = old;
+                    }
+                    fillers.forEach((slot, item)->{
+                        pane.setItem(slot, item.getItem());
+                    });
+                    final int[] delay = {0};
+                    for(Integer slot : pages.get(currentPage+1).keySet()) {
+                        if(this.removeDelay == 0)
+                            pane.setItem(slot, null);
+                        else
+                            (new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    pane.setItem(slot, null);
+                                }
+                            }).runTaskLaterAsynchronously(main, delay[0]+=this.removeDelay);
+                    }
+                    delay[0] = this.removeDelay;
+                    pages.get(currentPage).forEach((slot, item) -> {
+                        if(this.removeDelay == 0)
+                            pane.setItem(slot, item);
+                        else
+                            (new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    pane.setItem(slot, item);
+                                }
+                            }).runTaskLaterAsynchronously(main, delay[0]+=this.removeDelay);
+
+                    });
+                    if(currentPage <= 1 && (mainPage == null && mainListPage == null))
+                        if(fillers.containsKey(previous.slot)) pane.setItem(previous.slot, fillers.get(previous.slot).getItem());
+                    if(currentPage > 1 || (mainPage != null || mainListPage != null))
+                        pane.setItem(previous.slot, getPreviousPageItem().getItem());
+                    pane.setItem(next.slot, getNextPageItem().getItem());
+                    event.setCancelled(true);
+                    return;
+                }
+                if(event.getSlot() == next.slot && (event.getCurrentItem()!=null&&event.getCurrentItem().isSimilar(next.item.getItem()))) {
+                    if((currentPage+1) <= getPages()) currentPage++;
+                    if(currentPage > 1) pane.setItem(previous.slot, getPreviousPageItem().getItem());
+                    if(getName().contains("{page}")||getName().contains("{pages}")) {
+                        String old = getName();
+                        setName(getName().replace("{page}", currentPage + "").replace("{pages}", getPages() + ""));
+                        this.name = old;
+                    }
+                    fillers.forEach((slot, item)->{
+                        pane.setItem(slot, item.getItem());
+                    });
+                    final int[] delay = {0};
+                    for(Integer slot : pages.get(currentPage-1).keySet()) {
+                        if(this.removeDelay == 0)
+                            pane.setItem(slot, null);
+                        else
+                            (new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    pane.setItem(slot, null);
+                                }
+                            }).runTaskLaterAsynchronously(main, delay[0]+=this.removeDelay);
+                    }
+                    delay[0] = this.removeDelay;
+                    pages.get(currentPage).forEach((slot, item) -> {
+                        if(this.removeDelay == 0)
+                            pane.setItem(slot, item);
+                        else
+                            (new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    pane.setItem(slot, item);
+                                }
+                            }).runTaskLaterAsynchronously(main, delay[0]+=this.removeDelay);
+
+                    });
+                    if(currentPage>=getPages())
+                        if(fillers.containsKey(next.slot)) pane.setItem(next.slot, fillers.get(next.slot).getItem());
+                    pane.setItem(previous.slot, getPreviousPageItem().getItem());
+                    if(currentPage < getPages()) pane.setItem(next.slot, getNextPageItem().getItem());
+                    event.setCancelled(true);
+                    return;
+                }
+                if(pages.get(currentPage).containsKey(event.getSlot()) || !isFiller(event.getSlot())) {
+                    if(onClick!=null)
+                        onClick.onEvent(event);
+                    return;
+                }
+            });
+        }
         player.openInventory(pane);
         if(getName().contains("{page}")||getName().contains("{pages}")) {
             String old = getName();

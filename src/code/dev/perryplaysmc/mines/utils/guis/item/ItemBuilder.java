@@ -48,6 +48,8 @@ public class ItemBuilder {
         this.item = item;
         this.itemMeta = item.getItemMeta();
         this.lore = new ArrayList<>();
+        if(itemMeta!=null&&itemMeta.hasLore())
+            lore = itemMeta.getLore();
         try {
             this.dataUtil = new ItemNMSData();
         } catch (Exception e) {
@@ -78,6 +80,10 @@ public class ItemBuilder {
 
     public ItemBuilder(Material material, int amount) {
         this(new ItemStack(material, amount));
+    }
+
+    public String toString() {
+        return "ItemBuilder: {" + data.toString() + "}";
     }
 
     public ItemBuilder setCompound(NBTCompound compound) {
@@ -364,7 +370,6 @@ public class ItemBuilder {
                 name = name.replace(key, replacement);
             }
             itemMeta.setDisplayName(name);
-
             itemMeta.setLore(newLore);
             item.setItemMeta(itemMeta);
         }

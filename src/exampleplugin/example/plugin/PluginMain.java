@@ -54,7 +54,7 @@ public class PluginMain extends JavaPlugin {
         gui.cancel()
                 .onClick((e -> {
                     if(e.getSlot()==6) {
-                        BetterListGUI list = BetterGUIManager.createList(gui, "&m                  &r&c{page}/{pages}&r&m                ", 36);
+                        BetterListGUI list = BetterGUIManager.createList(gui, "&m                  &r&c{page}/{pages}&r&m                ", 54);
                         List<String> xmat = new ArrayList<String>() {{
                             for(XMaterial mat : XMaterial.values())
                                 if(!ItemBuilder.isAir(mat.parseItem()) && mat.parseMaterial().isItem())
@@ -68,7 +68,7 @@ public class PluginMain extends JavaPlugin {
                         }
                         list.setRemoveDelay(3);
                         list.playSound()
-                                .addFiller(FillerType.BOTTOM_ROW, new ItemBuilder(XMaterial.LIME_STAINED_GLASS_PANE).name(""))
+                                .addFiller(FillerType.BORDER, new ItemBuilder(XMaterial.LIME_STAINED_GLASS_PANE).name(""))
                                 .allowAdd()
                                 .allowDrag()
                                 .denyTake()
