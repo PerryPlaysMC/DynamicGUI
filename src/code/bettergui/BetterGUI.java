@@ -203,8 +203,9 @@ public class BetterGUI {
         int amt = item.getAmount();
         List<Integer> removeSlots = new ArrayList<>();
         for(Integer slot : items.keySet()) {
-            if(amt == 0) continue;
+            if(amt == 0||slot==null) continue;
             ItemStack slotItem = items.get(slot);
+            if(slotItem==null)continue;
             ItemStack slotClone = slotItem.clone();
             slotClone.setAmount(1);
             if(slotClone.isSimilar(itemClone)) {

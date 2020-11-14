@@ -1,7 +1,6 @@
 package bettergui.utils.nbt;
 
 import bettergui.utils.nbt.types.*;
-import dev.perryplaysmc.mines.utils.guis.utils.nbt.types.*;
 import com.google.gson.Gson;
 import bettergui.utils.nbt.types.arrays.NBTByteArray;
 import bettergui.utils.nbt.types.arrays.NBTIntegerArray;

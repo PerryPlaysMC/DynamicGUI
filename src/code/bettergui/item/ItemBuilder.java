@@ -9,7 +9,6 @@ import bettergui.utils.nbt.types.arrays.NBTIntegerArray;
 import bettergui.utils.nbt.types.arrays.NBTLongArray;
 import bettergui.utils.nbt.types.arrays.NBTStringArray;
 import bettergui.item.utils.ItemParser;
-import dev.perryplaysmc.mines.utils.guis.utils.nbt.types.*;
 import com.google.common.collect.ImmutableList;
 import bettergui.utils.ItemNMSData;
 import org.bukkit.ChatColor;

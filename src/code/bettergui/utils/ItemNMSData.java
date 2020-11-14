@@ -5,8 +5,6 @@ import bettergui.utils.nbt.NBTCompound;
 import bettergui.utils.nbt.NBTList;
 import bettergui.utils.nbt.types.*;
 import bettergui.utils.nbt.types.arrays.*;
-import dev.perryplaysmc.mines.utils.guis.utils.nbt.types.*;
-import dev.perryplaysmc.mines.utils.guis.utils.nbt.types.arrays.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

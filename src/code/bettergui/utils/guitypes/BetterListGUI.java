@@ -553,6 +553,7 @@ public class BetterListGUI extends BetterGUI {
                             (new BukkitRunnable() {
                                 @Override
                                 public void run() {
+                                    if(slot < 0) return;
                                     pane.setItem(slot, null);
                                 }
                             }).runTaskLaterAsynchronously(main, delay[0]+=this.removeDelay);
@@ -565,6 +566,7 @@ public class BetterListGUI extends BetterGUI {
                             (new BukkitRunnable() {
                                 @Override
                                 public void run() {
+                                    if(slot < 0) return;
                                     pane.setItem(slot, item);
                                 }
                             }).runTaskLaterAsynchronously(main, delay[0]+=this.removeDelay);
@@ -597,6 +599,7 @@ public class BetterListGUI extends BetterGUI {
                             (new BukkitRunnable() {
                                 @Override
                                 public void run() {
+                                    if(slot > getSize()) return;
                                     pane.setItem(slot, null);
                                 }
                             }).runTaskLaterAsynchronously(main, delay[0]+=this.removeDelay);
@@ -609,6 +612,7 @@ public class BetterListGUI extends BetterGUI {
                             (new BukkitRunnable() {
                                 @Override
                                 public void run() {
+                                    if(slot > getSize()) return;
                                     pane.setItem(slot, item);
                                 }
                             }).runTaskLaterAsynchronously(main, delay[0]+=this.removeDelay);
