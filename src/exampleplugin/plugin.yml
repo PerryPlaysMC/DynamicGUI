@@ -1,7 +1,5 @@
-main: example.plugin.PluginMain
+main: dev.perryplaysmc.dynamicguiplugin.PluginMain
 version: 1.0
-name: 'BetterGUIs'
+name: 'DynamicGUI'
 api-version: 1.13
-
-commands:
-  test:
+author: 'PerryPlaysMC'
