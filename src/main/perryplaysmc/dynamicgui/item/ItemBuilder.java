@@ -263,10 +263,7 @@ public class ItemBuilder {
         if(itemMeta==null) return this;
         if(name.isEmpty() || name == null) name = "§a ";
         DynamicJText text = new DynamicJText(translate(name));
-        NBTCompound cmp = new NBTCompound();
-        if(getCompound("display") != null) cmp = getCompound("display");
-        cmp.setString("Name", text.toString());
-        setNBTTag("display",cmp);
+        setString("display.Name", text.toString());
         return this;
     }
 
@@ -285,10 +282,7 @@ public class ItemBuilder {
     }
 
     private void setLore() {
-        NBTCompound cmp = new NBTCompound();
-        if(getCompound("display") != null) cmp = getCompound("display");
-        cmp.set("Lore", new NBTStringArray(toJsonArray(this.lore)));
-        setNBTTag("display",cmp);
+        setStringArray("display.Lore",toJsonArray(this.lore));
     }
 
     public ItemBuilder addLore(String... lore) {
@@ -404,16 +398,13 @@ public class ItemBuilder {
             String name = null;
             if(hasKey("display.Name")) name = DynamicJText.fromJson(getString("display.Name")).toPlainText();
             item.setItemMeta(itemMeta);
-            NBTCompound cmp = getCompound("display");
-            if(cmp==null)cmp = new NBTCompound();
             if(name != null) {
                 for(Map.Entry<String, String> entry : replaceName.entrySet())
                     name = name.replace(entry.getKey(), entry.getValue());
                 DynamicJText text = new DynamicJText(translate(name));
-                cmp.setString("Name", text.toString());
+                setString("display.Name", text.toString());
             }
-            cmp.set("Lore", new NBTStringArray(toJsonArray(newLore)));
-            setNBTTag("display", cmp);
+            setStringArray("display.Lore", toJsonArray(newLore));
         }
         if(data != null) {
             dataUtil.setData(data);

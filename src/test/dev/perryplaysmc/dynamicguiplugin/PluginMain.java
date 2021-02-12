@@ -39,7 +39,7 @@ public class PluginMain extends JavaPlugin {
         DynamicGUIManager.create("Hello", 5);
         DynamicGUIManager.enable(this);
         ItemBuilder ib = new ItemBuilder(Material.STONE).addLore("&cHello&bTher&ee").name("Haha");
-        System.out.println(ib.getCompound().toString());
+        System.out.println("comp: "+ib.getCompound().toString());
         for(Player player : Bukkit.getOnlinePlayers()) {
             player.getInventory().addItem(ib.getItem());
         }

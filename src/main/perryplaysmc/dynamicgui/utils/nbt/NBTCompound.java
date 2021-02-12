@@ -51,8 +51,9 @@ public class NBTCompound implements NBTBase, Cloneable{
     }
 
     public NBTCompound addCompound(String key) {
-        NBTCompound comp = new NBTCompound(key,this);
-        data.put(key, comp);
+        NBTCompound comp = getCompound(key) == null ? new NBTCompound(key,this) : getCompound(key);
+        if(getCompound(key) == null)
+            data.put(key, comp);
         return comp;
     }
 
@@ -60,13 +61,12 @@ public class NBTCompound implements NBTBase, Cloneable{
     public void setNBTTag(String key, NBTBase value) {
         if(key.contains(".")) {
             String[] deep = key.split("\\.");
-            NBTCompound compound = new NBTCompound();
+            NBTCompound compound = addCompound(deep[0]);
             for(int i = 1; i < deep.length; i++) {
                 if(i == deep.length-1) compound.set(deep[i], value);
                 else compound = compound.addCompound(deep[i]);
             }
-            while(compound.hasOwner())
-                compound = compound.getOwner();
+            while(compound.getOwner()!=this) compound = compound.getOwner();
             data.put(deep[0], compound);
             return;
         }
@@ -153,27 +153,29 @@ public class NBTCompound implements NBTBase, Cloneable{
 
 
     public boolean hasKey(String key) {
+        if(key.charAt(0)=='.')key = key.substring(1);
         String k = key;
         if(key.contains(".")) k = key.split("\\.")[0];
         if(!data.containsKey(k)) return false;
-        if(!(data.get(k) instanceof NBTCompound)) return true;
-        return ((NBTCompound) data.get(k)).hasKey(key.replace(k + ".", ""));
+        if(!(data.get(k) instanceof NBTCompound) || k.equals(key)) return true;
+        return ((NBTCompound) data.get(k)).hasKey(key.replace(k, ""));
     }
 
-    private NBTBase dig(NBTCompound comp, String key) {
+    private NBTBase dig(String key) {
         String k = key;
         if(key.contains(".")) k = key.split("\\.")[0];
-        if(comp.getMap().get(k)==null) {
+        if(getMap().get(k)==null) {
             return null;
         }
-        if(!(comp.getMap().get(k) instanceof NBTCompound)) {
-            return comp.getMap().get(key);
+        if(!(getMap().get(k) instanceof NBTCompound)) {
+            return getMap().get(key);
         }
-        return ((NBTCompound) comp.getMap().get(k)).get(key.replace(k + ".", ""));
+        if(key.equals(k))return getMap().get(k);
+        return ((NBTCompound) getMap().get(k)).dig(key.replace(k + ".", ""));
     }
 
     public NBTBase get(String key) {
-        return hasKey(key) ? dig(this, key) : null;
+        return dig(key);
     }
 
     private void removeKey(NBTCompound comp, String key) {
@@ -287,7 +289,12 @@ public class NBTCompound implements NBTBase, Cloneable{
         var1 = var2;
 
         String var3;
-        for(Iterator var5 = ((Collection)var1).iterator(); var5.hasNext(); var0.append(s(var3)).append(':').append(this.data.get(var3))) {
+        for(Iterator var5 =
+            ((Collection)var1).iterator();
+            var5.hasNext();
+            var0.append(s(var3)).
+                    append(':')
+                    .append(this.data.get(var3))) {
             var3 = (String)var5.next();
             if (var0.length() != 1) {
                 var0.append(',');
