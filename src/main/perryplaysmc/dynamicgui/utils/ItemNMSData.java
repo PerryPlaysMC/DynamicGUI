@@ -109,8 +109,8 @@ public class ItemNMSData {
             Class<?> nmsStackC = nmsStack.getClass();
             Object compound = ((boolean)nmsStackC.getMethod("hasTag").invoke(nmsStack)) ?
                     nmsStackC.getMethod("getTag").invoke(nmsStack) : comp.newInstance();
-            Method m = nmsStackC.getMethod("save", comp);
-            m.invoke(nmsStack, compound);
+//            Method m = nmsStackC.getMethod("save", comp);
+//            m.invoke(nmsStack, compound);
             data = convert(compound);
         }catch (Exception e) {
             e.printStackTrace();

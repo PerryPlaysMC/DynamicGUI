@@ -1,5 +1,6 @@
 package perryplaysmc.dynamicgui.item;
 
+import perryplaysmc.dynamicgui.utils.json.DynamicJText;
 import perryplaysmc.dynamicgui.utils.nbt.NBTBase;
 import perryplaysmc.dynamicgui.utils.nbt.NBTCompound;
 import perryplaysmc.dynamicgui.utils.nbt.NBTList;
@@ -20,18 +21,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import perryplaysmc.dynamicgui.utils.nbt.types.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Copy Right ©
  * This code is private
  * Owner: PerryPlaysMC
  * From: 10/2020-Now
- * <p>
- * Any attempts to use these program(s) may result in a penalty of up to $1,000 USD
  **/
 @SuppressWarnings("all")
 public class ItemBuilder {
@@ -55,6 +51,8 @@ public class ItemBuilder {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        setType(item.getType());
+        setAmount(item.getAmount());
         this.data = dataUtil.getData(item);
     }
 
@@ -91,6 +89,13 @@ public class ItemBuilder {
         setString("id", "minecraft:" + type.name().toLowerCase());
         return this;
     }
+
+    public ItemBuilder setAmount(int amount) {
+        item.setAmount(amount);
+        setInt("Count", amount);
+        return this;
+    }
+
     public ItemBuilder setCompound(NBTCompound compound) {
         this.data = compound;
         return this;
@@ -125,9 +130,9 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setString(String key, String value) {
-        if(key.equalsIgnoreCase("key")) {
-            String type = value;
-            if(value.split("minecraft:").length == 1) type = value.split("minecraft:")[1];
+        if(key.equals("id")) {
+            String type = value.toLowerCase();
+            if(value.split(":").length == 2) type = value.split(":")[1];
             Material mat = Material.valueOf(type.toUpperCase());
             if(mat != null) item.setType(mat);
         }
@@ -135,6 +140,8 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setInt(String key, int value) {
+        if(key.equals("Count"))
+            item.setAmount(value);
         return setNBTTag(key, new NBTInteger(value));
     }
 
@@ -254,8 +261,12 @@ public class ItemBuilder {
     public ItemBuilder name(String name) {
         if(itemMeta==null) itemMeta = item.getItemMeta();
         if(itemMeta==null) return this;
-        if(name.isEmpty() || name == null) name = "§";
-        itemMeta.setDisplayName(translate(name));
+        if(name.isEmpty() || name == null) name = "§a ";
+        DynamicJText text = new DynamicJText(translate(name));
+        NBTCompound cmp = new NBTCompound();
+        if(getCompound("display") != null) cmp = getCompound("display");
+        cmp.setString("Name", text.toString());
+        setNBTTag("display",cmp);
         return this;
     }
 
@@ -273,11 +284,18 @@ public class ItemBuilder {
         return this;
     }
 
+    private void setLore() {
+        NBTCompound cmp = new NBTCompound();
+        if(getCompound("display") != null) cmp = getCompound("display");
+        cmp.set("Lore", new NBTStringArray(toJsonArray(this.lore)));
+        setNBTTag("display",cmp);
+    }
+
     public ItemBuilder addLore(String... lore) {
         if(itemMeta==null) itemMeta = item.getItemMeta();
         if(itemMeta==null) return this;
-        for(String line : lore)
-            this.lore.add(translate(line));
+        for(String line : lore) this.lore.add(translate(line));
+        setLore();
         return this;
     }
 
@@ -285,8 +303,8 @@ public class ItemBuilder {
         if(itemMeta==null) itemMeta = item.getItemMeta();
         if(itemMeta==null) return this;
         this.lore.clear();
-        for(String line : lore)
-            this.lore.add(translate(line));
+        for(String line : lore) this.lore.add(translate(line));
+        setLore();
         return this;
     }
 
@@ -294,6 +312,7 @@ public class ItemBuilder {
         if(itemMeta==null) itemMeta = item.getItemMeta();
         if(itemMeta==null) return this;
         lore.set(index, translate(line));
+        setLore();
         return this;
     }
 
@@ -301,6 +320,7 @@ public class ItemBuilder {
         if(itemMeta==null) itemMeta = item.getItemMeta();
         if(itemMeta==null) return this;
         lore.remove(index);
+        setLore();
         return this;
     }
 
@@ -308,7 +328,16 @@ public class ItemBuilder {
         if(itemMeta==null) itemMeta = item.getItemMeta();
         if(itemMeta==null) return this;
         lore.remove(translate(text));
+        setLore();
         return this;
+    }
+
+    private String[] toJsonArray(List<String> text) {
+        String[] arr = new String[text.size()];
+        for(int i = 0; i < text.size(); i++) {
+            arr[i] = new DynamicJText(text.get(i)).toJsonString();
+        }
+        return arr;
     }
 
     public ItemBuilder addAttribbute(Attribute attribbute, AttributeModifier mod) {
@@ -356,7 +385,7 @@ public class ItemBuilder {
     public String getName() {
         if(itemMeta==null) itemMeta = item.getItemMeta();
         if(itemMeta==null) return "null";
-        return itemMeta.getDisplayName();
+        return DynamicJText.fromJson(getString("display.Name")).toPlainText();
     }
 
     public List<String> getLore() {
@@ -372,15 +401,21 @@ public class ItemBuilder {
                 for(Map.Entry<String, String> entry : replaceLore.entrySet()) line = line.replace(entry.getKey(), entry.getValue());
                 newLore.add(line);
             }
-            String name = itemMeta.getDisplayName();
-            for(Map.Entry<String, String> entry : replaceName.entrySet()) name = name.replace(entry.getKey(), entry.getValue());
-            itemMeta.setDisplayName(translate(name));
-            itemMeta.setLore(newLore);
+            String name = null;
+            if(hasKey("display.Name")) name = DynamicJText.fromJson(getString("display.Name")).toPlainText();
             item.setItemMeta(itemMeta);
+            NBTCompound cmp = getCompound("display");
+            if(cmp==null)cmp = new NBTCompound();
+            if(name != null) {
+                for(Map.Entry<String, String> entry : replaceName.entrySet())
+                    name = name.replace(entry.getKey(), entry.getValue());
+                DynamicJText text = new DynamicJText(translate(name));
+                cmp.setString("Name", text.toString());
+            }
+            cmp.set("Lore", new NBTStringArray(toJsonArray(newLore)));
+            setNBTTag("display", cmp);
         }
         if(data != null) {
-            if(data.getMap().size()==2) 
-                if(data.hasKey("id") && data.hasKey("Count")) return item;
             dataUtil.setData(data);
             item = dataUtil.finish(item);
         }

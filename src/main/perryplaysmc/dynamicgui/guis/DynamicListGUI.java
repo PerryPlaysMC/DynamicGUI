@@ -19,8 +19,6 @@ import java.util.*;
  * This code is private
  * Owner: PerryPlaysMC
  * From: 10/2020-Now
- * <p>
- * Any attempts to use these program(s) may result in a penalty of up to $1,000 USD
  **/
 @SuppressWarnings("all")
 public class DynamicListGUI extends DynamicGUI {

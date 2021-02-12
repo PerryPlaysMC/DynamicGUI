@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
  * From: 12/2/19-2023
  * Package: me.perryplaysmc.base.utils.inventory
  * Path: me.perryplaysmc.base.utils.inventory.data.ItemUtility
- * <p>
- * Any attempts to use these program(s) may result in a penalty of up to $1,000 USD
  **/
 
 @SuppressWarnings("all")

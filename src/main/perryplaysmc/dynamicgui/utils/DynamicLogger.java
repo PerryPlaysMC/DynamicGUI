@@ -8,8 +8,6 @@ import org.bukkit.ChatColor;
  * This code is private
  * Owner: PerryPlaysMC
  * From: 02/2021-Now
- * <p>
- * Any attempts to use these program(s) may result in a penalty of up to $1,000 USD
  **/
 
 public class DynamicLogger {

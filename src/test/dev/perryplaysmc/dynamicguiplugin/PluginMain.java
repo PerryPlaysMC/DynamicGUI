@@ -2,6 +2,7 @@ package dev.perryplaysmc.dynamicguiplugin;
 
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import org.bukkit.inventory.meta.ItemMeta;
 import perryplaysmc.dynamicgui.guis.DynamicGUI;
 import perryplaysmc.dynamicgui.guis.DynamicGUIManager;
 import perryplaysmc.dynamicgui.item.ItemBuilder;
@@ -22,6 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,41 +38,16 @@ public class PluginMain extends JavaPlugin {
     public void onEnable() {
         DynamicGUIManager.create("Hello", 5);
         DynamicGUIManager.enable(this);
-        ItemBuilder ib = new ItemBuilder(Material.STONE);
+        ItemBuilder ib = new ItemBuilder(Material.STONE).addLore("&cHello&bTher&ee").name("Haha");
         System.out.println(ib.getCompound().toString());
-        ib.setType(Material.GOLD_INGOT);
-        System.out.println(convertItemStack(ib.getItem()));
         for(Player player : Bukkit.getOnlinePlayers()) {
-            System.out.println(ib.getItem().getType());
             player.getInventory().addItem(ib.getItem());
-            player.spigot().sendMessage(new ComponentBuilder("Hey").event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(
-                    ib.getCompound().toString()
-            ).create())).create());
         }
     }
+
     @Override
     public void onDisable() {
         DynamicGUIManager.disable();
-    }
-
-    public String convertItemStack(ItemStack item) {
-        try {
-            Class<?> nmsStackC = Class.forName(Version.getNMSPackage() + ".ItemStack");
-            Class<?> cbStack = Class.forName(Version.getCBPackage() + ".inventory.CraftItemStack");
-            Class<?> cmp = Class.forName(Version.getNMSPackage() + ".NBTTagCompound");
-            Object nmsStack = cbStack.getMethod("asNMSCopy", ItemStack.class).invoke(null, item);
-            boolean hasTag = ((boolean)nmsStackC.getMethod("hasTag").invoke(nmsStack));
-            Object tag;
-            if(hasTag) tag = nmsStackC.getMethod("getTag").invoke(nmsStack);
-            else {
-                tag = cmp.newInstance();
-                nmsStackC.getMethod("save", cmp).invoke(nmsStack, tag);
-            }
-            return cmp.getMethod("toString").invoke(tag).toString();
-        }catch (Exception e) {
-
-        }
-        return "";
     }
 
 
