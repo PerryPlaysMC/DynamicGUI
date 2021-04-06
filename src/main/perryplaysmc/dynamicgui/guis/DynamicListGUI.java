@@ -36,7 +36,7 @@ public class DynamicListGUI extends DynamicGUI {
 
     public DynamicListGUI(String name, int size) {
         super(name, size);
-        this.pane = Bukkit.createInventory(null, size, getName().replace("{page}", currentPage+"").replace("{pages}", getPages()+""));
+        this.pane = Bukkit.createInventory(this, size, getName().replace("{page}", currentPage+"").replace("{pages}", getPages()+""));
         this.previous = new TurnPage(getSize() - 9, new ItemBuilder(XMaterial.RED_WOOL).name("§cPrevious page").setLore("&cPrevious: {previous}")
                 .replaceInLore("{previous}", (currentPage-1) <= 0 ? "Main" : (currentPage-1)));
         this.next = new TurnPage(getSize() - 1, new ItemBuilder(XMaterial.LIME_WOOL).name("§aNext page").setLore("&aNext: {next}")

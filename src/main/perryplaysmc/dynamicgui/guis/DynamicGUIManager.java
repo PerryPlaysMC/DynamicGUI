@@ -33,14 +33,21 @@ public class DynamicGUIManager implements Listener {
     private static Set<DynamicListGUI> LIST_GUIS;
     private final List<Player> tookTop = new ArrayList<>(), tookBottom = new ArrayList<>();
 
+    public static boolean warn() {
+        if(!ENABLED) {
+            DynamicLogger.warn("DynamicGUI's have not been enabled!",
+                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method",
+                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
+            return true;
+        }
+        return false;
+    }
 
     protected static void registerGUI(DynamicGUI gui) {
         if(ENABLED) {
             GUIS.add(gui);
             ALL.add(gui);
-        } else DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
+        } else warn();
     }
 
     public static void enable(Plugin plugin) {
@@ -104,33 +111,22 @@ public class DynamicGUIManager implements Listener {
     }
 
     private void addTop(Player p) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return;
-        }
+        if(warn()) return;
         tookTop.add(p);
         tookBottom.remove(p);
     }
 
 
     private void addBottom(Player p) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return;
-        }
+        if(warn()) return;
         tookBottom.add(p);
         tookTop.remove(p);
     }
 
     @EventHandler void onClick(InventoryClickEvent event) {
         if(!ENABLED) return;
-        Optional<DynamicGUI> oGUI = getDynamicGUI((Player)event.getWhoClicked(), event.getView().getTitle(), event.getInventory());
-        if(!oGUI.isPresent())return;
-        DynamicGUI gui = oGUI.get();
+        if(!(event.getInventory().getHolder() instanceof DynamicGUI)) return;
+        DynamicGUI gui = (DynamicGUI) event.getInventory().getHolder();
         if(!isDynamicGUIAvailable(gui)) return;
         Player p = (Player) event.getWhoClicked();
         Inventory top = event.getView().getTopInventory();
@@ -195,9 +191,8 @@ public class DynamicGUIManager implements Listener {
 
     @EventHandler void onClose(InventoryCloseEvent event) {
         if(!ENABLED) return;
-        Optional<DynamicGUI> oGUI = getDynamicGUI((Player) event.getPlayer(), event.getView().getTitle());
-        if(!oGUI.isPresent())return;
-        DynamicGUI gui = oGUI.get();
+        if(!(event.getInventory().getHolder() instanceof DynamicGUI)) return;
+        DynamicGUI gui = (DynamicGUI) event.getInventory().getHolder();
         if(!isDynamicGUIAvailable(gui))return;
         Player p = (Player) event.getPlayer();
         tookBottom.remove(p);
@@ -209,18 +204,16 @@ public class DynamicGUIManager implements Listener {
 
     @EventHandler void onOpen(InventoryOpenEvent event) {
         if(!ENABLED) return;
-        Optional<DynamicGUI> oGUI = getDynamicGUI((Player) event.getPlayer(), event.getView().getTitle());
-        if(!oGUI.isPresent())return;
-        DynamicGUI gui = oGUI.get();
+        if(!(event.getInventory().getHolder() instanceof DynamicGUI)) return;
+        DynamicGUI gui = (DynamicGUI) event.getInventory().getHolder();
         if(!isDynamicGUIAvailable(gui))return;
         if(gui.getOpen()!=null) gui.getOpen().onEvent(event);
     }
 
     @EventHandler void onDrag(InventoryDragEvent event) {
         if(!ENABLED) return;
-        Optional<DynamicGUI> oGUI = getDynamicGUI((Player) event.getWhoClicked(), event.getView().getTitle(), event.getInventory());
-        if(!oGUI.isPresent())return;
-        DynamicGUI gui = oGUI.get();
+        if(!(event.getInventory().getHolder() instanceof DynamicGUI)) return;
+        DynamicGUI gui = (DynamicGUI) event.getInventory().getHolder();
         if(!isDynamicGUIAvailable(gui))return;
         Player p = (Player) event.getWhoClicked();
         for(Integer i : event.getRawSlots()) {
@@ -262,32 +255,17 @@ public class DynamicGUIManager implements Listener {
     }
 
     public static void disableGUI(DynamicGUI gui) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return;
-        }
+        if(warn()) return;
         IGNORED.add(gui);
     }
 
     public static void enableGUI(DynamicGUI gui) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return;
-        }
+        if(warn()) return;
         IGNORED.remove(gui);
     }
 
     public static boolean addDynamicGUI(DynamicGUI gui) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return false;
-        }
+        if(warn()) return false;
         if(!GUIS.contains(gui)) {
             GUIS.add(gui);
             ALL.add(gui);
@@ -297,12 +275,7 @@ public class DynamicGUIManager implements Listener {
     }
 
     public static boolean removeDynamicGUI(DynamicGUI gui) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return false;
-        }
+        if(warn()) return false;
         if(GUIS.contains(gui)) {
             GUIS.remove(gui);
             ALL.remove(gui);
@@ -312,44 +285,37 @@ public class DynamicGUIManager implements Listener {
     }
 
     public static boolean isDynamicGUIAvailable(DynamicGUI gui) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return false;
-        }
+        if(warn()) return false;
         if(IGNORED.contains(gui)) return false;
         return GUIS.contains(gui);
     }
 
     public static Optional<DynamicGUI> getDynamicGUI(@Nullable Player player, String name) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return Optional.empty();
-        }
+        if(warn()) return Optional.empty();
         return ALL.stream().filter(gui->checkGUI(player, name, gui)).findFirst();
     }
     public static Optional<DynamicGUI> getDynamicGUI(@Nullable Player player, String name, ItemStack[] contents) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return Optional.empty();
-        }
+        if(warn()) return Optional.empty();
         return ALL.stream().filter(gui->checkGUI(player, name, contents, gui)).findFirst();
     }
 
 
     public static Optional<DynamicGUI> getDynamicGUI(@Nullable Player player, String name, Inventory inventory) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return Optional.empty();
-        }
-        return ALL.stream().filter(gui->gui.getName().equalsIgnoreCase(name)).filter(gui->player==null||gui.getViewers().contains(player)).findFirst();
+       return getDynamicGUI(player,name,inventory.getContents());
+    }
+    public static Optional<DynamicListGUI> getDynamicListGUI(String name) {
+        if(warn()) return Optional.empty();
+        return LIST_GUIS.stream().filter(gui->gui.getName().equalsIgnoreCase(name)).findFirst();
+    }
+
+    public static Optional<DynamicListGUI> getDynamicListGUI(String name, ItemStack[] contents) {
+        if(warn()) return Optional.empty();
+        return LIST_GUIS.stream().filter(gui->gui.getName().equalsIgnoreCase(name)).filter(gui -> compare(contents, gui.getInventory().getContents())).findFirst();
+    }
+
+    public static Optional<DynamicListGUI> getDynamicListGUI(String name, Inventory inventory) {
+        if(warn()) return Optional.empty();
+        return LIST_GUIS.stream().filter(gui->gui.getName().equalsIgnoreCase(name)).filter(gui->inventory==gui.getInventory()).findFirst();
     }
 
 
@@ -361,43 +327,9 @@ public class DynamicGUIManager implements Listener {
 
 
     private static boolean checkGUI(@Nullable Player player, String name, ItemStack[] contents, DynamicGUI gui) {
-        if(name.equalsIgnoreCase(gui.getName()) &&compare(contents, gui.getInventory().getContents()))
+        if(name.equalsIgnoreCase(gui.getName()) && compare(contents, gui.getInventory().getContents()))
             return player == null || gui.getViewers().contains(player);
         return false;
-    }
-
-    public static Optional<DynamicListGUI> getDynamicListGUI(String name) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return Optional.empty();
-        }
-        return LIST_GUIS.stream().filter(gui->gui.getName().equalsIgnoreCase(name)).findFirst();
-    }
-
-    public static DynamicListGUI getDynamicListGUI(String name, ItemStack[] contents) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return null;
-        }
-        for(DynamicListGUI gui : LIST_GUIS)
-            if(gui.getName().equalsIgnoreCase(name) && compare(contents, gui.getInventory().getContents())) return gui;
-        return null;
-    }
-
-    public static DynamicListGUI getDynamicListGUI(String name, Inventory inventory) {
-        if(!ENABLED) {
-            DynamicLogger.warn("DynamicGUI's have not been enabled!", 
-                    "Please do &fDynamicGUIManager.enable(this);", "at the top of your onEnable method", 
-                    "And &fDynamicGUIManager.disable();", "at the top of your onDisable method");
-            return null;
-        }
-        for(DynamicListGUI gui : LIST_GUIS)
-            if((gui.getName().equalsIgnoreCase(name) && inventory == gui.getInventory())) return gui;
-        return null;
     }
 
     private static boolean compare(ItemStack[] contents1, ItemStack[] contents2) {

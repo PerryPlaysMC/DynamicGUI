@@ -57,6 +57,6 @@ public enum FillerType {
     /**
      * Covers the sixth row or bottom if 6th isn't available
      */
-    ROW_6
+    ROW_6;
 
 }

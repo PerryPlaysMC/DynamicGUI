@@ -17,6 +17,10 @@
     <orderEntry type="library" name="Bukkit v1_13" level="application" />
     <orderEntry type="library" name="Bukkit v1_12" level="application" />
     <orderEntry type="library" name="Bukkit v1_11" level="application" />
+    <orderEntry type="library" name="Bukkit v1_10" level="application" />
+    <orderEntry type="library" name="Bukkit v1_9" level="application" />
     <orderEntry type="library" name="Bukkit v1_8" level="application" />
+    <orderEntry type="library" name="Bukkit v1_7" level="application" />
+    <orderEntry type="library" name="Bukkit v1_6" level="application" />
   </component>
 </module>

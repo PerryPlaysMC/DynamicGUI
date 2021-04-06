@@ -1,6 +1,7 @@
 package perryplaysmc.dynamicgui.guis;
 
 import org.bukkit.event.inventory.*;
+import org.bukkit.inventory.InventoryHolder;
 import perryplaysmc.dynamicgui.utils.Version;
 import perryplaysmc.dynamicgui.utils.options.FillerType;
 import perryplaysmc.dynamicgui.item.ItemBuilder;
@@ -24,7 +25,7 @@ import java.util.*;
  * From: 10/2020-Now
  **/
 @SuppressWarnings("all")
-public class DynamicGUI {
+public class DynamicGUI implements InventoryHolder {
 
     protected String name = "";
     private Set<Player> viewers = new HashSet<>();
@@ -55,10 +56,10 @@ public class DynamicGUI {
         this.size = getInventorySize(size);
         if(size > -1) {
             if(size == 5)
-                this.pane = Bukkit.createInventory(null, InventoryType.HOPPER, this.name);
+                this.pane = Bukkit.createInventory(this, InventoryType.HOPPER, this.name);
             else if(size == 8)
-                this.pane = Bukkit.createInventory(null, InventoryType.DISPENSER, this.name);
-            else this.pane = Bukkit.createInventory(null, size, this.name);
+                this.pane = Bukkit.createInventory(this, InventoryType.DISPENSER, this.name);
+            else this.pane = Bukkit.createInventory(this, size, this.name);
             isDynamic = false;
         }
         this.items = new HashMap<>(54);
@@ -714,7 +715,7 @@ public class DynamicGUI {
     public void show(Player player) {
         if(pane == null) {
             size = genInventorySize(items.size());
-            this.pane = Bukkit.createInventory(null, size, this.name);
+            this.pane = Bukkit.createInventory(this, size, this.name);
             for(Integer slot : new HashSet<>(items.keySet())) {
                 pane.setItem(slot, items.get(slot));
             }
@@ -735,7 +736,7 @@ public class DynamicGUI {
     }
 
     protected int genInventorySize(int size) {
-        return size <= 9 ? 9 : size <= 18 ? 18 : size <= 27 ? 27 : size <= 36 ? 36 : size <= 45 ? 45 : 54;
+        return size + (size%9) > 54 ? 54 : size + (size%9);
     }
 
     public int getSize() {

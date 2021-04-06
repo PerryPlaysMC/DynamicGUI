@@ -8,6 +8,8 @@ import perryplaysmc.dynamicgui.utils.nbt.types.arrays.NBTIntegerArray;
 import perryplaysmc.dynamicgui.utils.nbt.types.arrays.NBTLongArray;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Pattern;
 
 /**
@@ -292,9 +294,7 @@ public class NBTCompound implements NBTBase, Cloneable{
         for(Iterator var5 =
             ((Collection)var1).iterator();
             var5.hasNext();
-            var0.append(s(var3)).
-                    append(':')
-                    .append(this.data.get(var3))) {
+            var0.append(s(var3)).append(':').append(this.data.get(var3))) {
             var3 = (String)var5.next();
             if (var0.length() != 1) {
                 var0.append(',');
