@@ -1,19 +1,18 @@
 package perryplaysmc.dynamicgui.guis;
 
-import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.Plugin;
-import perryplaysmc.dynamicgui.item.utils.ItemUtility;
-import perryplaysmc.dynamicgui.utils.DynamicLogger;
-import perryplaysmc.dynamicgui.utils.options.GUIFlag;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import perryplaysmc.dynamicgui.item.utils.ItemUtility;
+import perryplaysmc.dynamicgui.utils.DynamicLogger;
+import perryplaysmc.dynamicgui.utils.options.GUIFlag;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
@@ -23,6 +22,7 @@ import java.util.*;
  * Creator: PerryPlaysMC
  * Created: 10/2020
  **/
+
 @SuppressWarnings("unused")
 public class DynamicGUIManager implements Listener {
 

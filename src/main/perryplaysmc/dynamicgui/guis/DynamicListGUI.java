@@ -194,25 +194,14 @@ public class DynamicListGUI extends DynamicGUI {
 
     @Override
     public DynamicListGUI setItem(int slot, ItemBuilder item) {
-        items = pages.get(1);
-        if(slot > (getSize()-1) || getPages() > 0) {
-            int i = 1;
-            if(slot > (getSize()-1))
-                while(slot> getSize()-1) {
-                    if(!pages.containsKey(i))
-                        pages.put(i, new HashMap<>());
-                    slot-=getSize();
-                    i++;
-                }
-            for(int index : pages.keySet())
-                if(pages.get(index).size() < getActualSize()) {
-                    i = index;
-                    break;
-                }
-            while(fillers.containsKey(slot)) slot++;
-            if(slot > getSize()) while(fillers.containsKey(slot)) slot--;
-            if(!pages.containsKey(i-1))pages.put(i-1, new HashMap<>());
-            pages.get(i-1).put(slot, item.getItem());
+        int page = 1;
+        items = pages.get(page);
+        if(slot >= getSize() || getPages() > 0) {
+            if(slot > (getSize()-1)) {
+                while(slot >= getSize()) page++;
+                slot %= getSize();
+            }
+            setItem(page, slot, item);
             return this;
         }
         items.put(slot, item.getItem());
@@ -222,34 +211,26 @@ public class DynamicListGUI extends DynamicGUI {
     }
 
     public DynamicListGUI setItem(int page, int slot, ItemBuilder item) {
-        items = pages.get(page);
-        if(slot > (getSize()-1) || getPages() > 0) {
-            int i = page;
-            if(slot > (getSize()-1))
-                while(slot> getSize()-1) {
-                    if(!pages.containsKey(i))
-                        pages.put(i, new HashMap<>());
-                    slot-=getSize();
-                    i++;
+        if(slot > (getSize()-1) || getPages() > 0 || !pages.containsKey(page)) {
+            if(!pages.containsKey(page) && slot < getSize()) slot += page*getSize();
+            if(slot >= getSize()) {
+                while(slot >= getSize()) {
+                    if(!pages.containsKey(page)) pages.put(page, new HashMap<>());
+                    page++;
                 }
-            for(int index : pages.keySet())
-                if(pages.get(index).size() < getActualSize()) {
-                    i = index;
-                    break;
-                }
-            while(fillers.containsKey(slot)) {
-                slot++;
+                slot %= getSize();
             }
-            if(slot > getSize()) {
-                while(fillers.containsKey(slot))
-                    slot--;
-            }
-            pages.get(i-1).put(slot, item.getItem());
+            items = pages.getOrDefault(page, new HashMap<>());
+            items.put(slot, item.getItem());
+            pages.put(page,items);
             return this;
         }
+        items = pages.getOrDefault(page, new HashMap<>());
         items.put(slot, item.getItem());
-        if(items.size() == getActualSize()) pages.put(1, items);
-        getInventory().setItem(slot, item.getItem());
+        pages.put(page,items);
+        if(items.size() == getActualSize()) pages.put(page, items);
+        if(page == currentPage)
+            getInventory().setItem(slot, item.getItem());
         return this;
     }
 
