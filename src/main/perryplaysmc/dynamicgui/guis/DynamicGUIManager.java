@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scoreboard.Team;
 import perryplaysmc.dynamicgui.item.utils.ItemUtility;
 import perryplaysmc.dynamicgui.utils.DynamicLogger;
 import perryplaysmc.dynamicgui.utils.options.GUIFlag;
@@ -65,13 +66,13 @@ public class DynamicGUIManager implements Listener {
 
     public static void disable() {
         if(ENABLED) {
+            for(DynamicGUI gui : getDynamicGUIS()) for(Player view : gui.getViewers())view.closeInventory();
             ALL.clear();
             GUIS.clear();
             IGNORED.clear();
             LIST_GUIS.clear();
             HandlerList.unregisterAll(instance);
             ENABLED = false;
-            for(DynamicGUI gui : getDynamicGUIS()) for(Player view : gui.getViewers())view.closeInventory();
         }
     }
     
@@ -82,8 +83,7 @@ public class DynamicGUIManager implements Listener {
     public static DynamicGUI getOrCreate(String name, int size) {
         Optional<DynamicGUI> gui = getDynamicGUI(null, name);
         if(!gui.isPresent()) return new DynamicGUI(name, size);
-        DynamicGUI dg = gui.get().setNew(false);
-        return dg;
+        return gui.get().setNew(false);
     }
 
     public static Set<DynamicGUI> getDynamicGUIS() {
@@ -115,7 +115,6 @@ public class DynamicGUIManager implements Listener {
         tookTop.add(p);
         tookBottom.remove(p);
     }
-
 
     private void addBottom(Player p) {
         if(warn()) return;
@@ -355,47 +354,5 @@ public class DynamicGUIManager implements Listener {
     }
 
     //Here's how to get an InventoryName in Bukkit/Spigot 1.13+
-    private static String getName(Inventory inv) {
-        try {//First check if it is 1.13+
-            Method m = inv.getClass().getMethod("getName");
-            m.setAccessible(true);
-            return (String) m.invoke(inv);
-        } catch (Exception ignored) {
-            try {//Still checking if it is 1.13+
-                Method m = inv.getClass().getMethod("getTitle");
-                m.setAccessible(true);
-                return (String) m.invoke(inv);
-            } catch (Exception ignored1) {
-                try {//Get the version
-                    String pack = Bukkit.getServer().getClass().getPackage().getName();
-                    String version = pack.substring(pack.lastIndexOf('.') + 1);
-                    //get the Bukkit Inventory Classes +/ MinecraftInventory
-                    Class<?> cic = Class.forName("org.bukkit.craftbukkit." + version + ".inventory.CraftInventoryCustom");
-                    Class<?> ci = Class.forName("org.bukkit.craftbukkit." + version + ".inventory.CraftInventory");
-                    Class<?> mci = cic.getDeclaredClasses()[0];
-                    String title = "";
-                    if(inv.getClass().isAssignableFrom(cic)) {//Check if it's a custom inventory
-                        Method m = ci.getMethod("getInventory");
-                        m.setAccessible(true);
-                        Object mcii = mci.cast(m.invoke(ci.cast(inv)));
-                        //get the IInventory and cast to MinecraftInventory
-                        try {
-                            m = mci.getMethod("getTitle");
-                            m.setAccessible(true);
-                            //Get the Title Method and set accessable
-                            title = (String) m.invoke(mcii);//INVOKE!
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }//One last check and return the title else return default name
-                    return inv.getClass().isAssignableFrom(cic) ? title : inv.getType().getDefaultTitle();
-                } catch (Exception e) {
-                    e.printStackTrace();//Print errors to let peeps know if something happened
-                    System.out.println("There was an error while getting an inventory name");
-                    return "Error, check console";
-                }
-            }
-        }
-    }
 
 }

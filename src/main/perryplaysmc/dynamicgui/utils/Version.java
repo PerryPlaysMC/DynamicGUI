@@ -70,6 +70,25 @@ public enum Version {
         return "org.bukkit.craftbukkit.v" + getCurrentVersionExact().getVersion();
     }
 
+    public static class CraftBukkit {
+        public static Class<?> getClass(String name) {
+            try {
+                return Class.forName(getCBPackage() + "." + name);
+            }catch (Exception e) {
+                return null;
+            }
+        }
+    }
+    public static class Minecraft {
+        public static Class<?> getClass(String name) {
+            try {
+                return Class.forName(getNMSPackage() + "." + name);
+            }catch (Exception e) {
+                return null;
+            }
+        }
+    }
+
 
     public static Version getCurrentVersionExact() {
         String pack =  Bukkit.getServer().getClass().getPackage().getName();

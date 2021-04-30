@@ -6,7 +6,7 @@ import perryplaysmc.dynamicgui.utils.Version;
 import perryplaysmc.dynamicgui.utils.options.FillerType;
 import perryplaysmc.dynamicgui.item.ItemBuilder;
 import perryplaysmc.dynamicgui.item.XSound;
-import perryplaysmc.dynamicgui.utils.TitleChanger;
+import perryplaysmc.dynamicgui.utils.TitleUtils;
 import perryplaysmc.dynamicgui.utils.options.GUIFlag;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -457,7 +457,7 @@ public class DynamicGUI implements InventoryHolder {
         if(name.equalsIgnoreCase(translate(newName)))return this;
         this.name = translate(newName);
         Set<Player> old = new HashSet<>(getViewers());
-        for(Player p : old) TitleChanger.update(p, name);
+        for(Player p : old) TitleUtils.update(p, name);
         return this;
     }
     /**
